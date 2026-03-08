@@ -1,11 +1,34 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>موقعي الأول</title>
+  <title>Snake Game</title>
+  <style>
+    body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #222; }
+    canvas { border: 5px solid #fff; background: #000; }
+  </style>
 </head>
 <body>
-    <h1>مرحباً بك في موقعي!</h1>
-    <p>هذه أول صفحة لي على GitHub.</p>
+  <canvas id="game" width="400" height="400"></canvas>
+  <script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    let box = 20, snake = [{x: 10*box, y: 10*box}], dir = "RIGHT", food = {x: Math.floor(Math.random()*20)*box, y: Math.floor(Math.random()*20)*box};
+    document.addEventListener("keydown", e => { 
+      if(e.keyCode==37 && dir!="RIGHT") dir="LEFT"; else if(e.keyCode==38 && dir!="DOWN") dir="UP";
+      else if(e.keyCode==39 && dir!="LEFT") dir="RIGHT"; else if(e.keyCode==40 && dir!="UP") dir="DOWN";
+    });
+    function draw() {
+      ctx.fillStyle = "black"; ctx.fillRect(0,0,400,400);
+      for(let i=0; i<snake.length; i++) { ctx.fillStyle = (i==0)?"green":"lime"; ctx.fillRect(snake[i].x, snake[i].y, box, box); }
+      ctx.fillStyle = "red"; ctx.fillRect(food.x, food.y, box, box);
+      let headX = snake[0].x, headY = snake[0].y;
+      if(dir=="LEFT") headX-=box; if(dir=="UP") headY-=box; if(dir=="RIGHT") headX+=box; if(dir=="DOWN") headY+=box;
+      if(headX==food.x && headY==food.y) food = {x: Math.floor(Math.random()*20)*box, y: Math.floor(Math.random()*20)*box}; else snake.pop();
+      let newHead = {x: headX, y: headY};
+      if(headX<0||headY<0||headX>=400||headY>=400) clearInterval(game);
+      snake.unshift(newHead);
+    }
+    let game = setInterval(draw, 100);
+  </script>
 </body>
 </html>
